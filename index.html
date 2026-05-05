@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人脉雷达 - iOS App 交互预览</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'PingFang SC', sans-serif; background: #1a1a2e; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; padding: 30px; gap: 30px; flex-wrap: wrap; }
+
+.phone { width: 375px; height: 812px; background: #fff; border-radius: 44px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.5); position: relative; display: flex; flex-direction: column; }
+.phone-notch { width: 150px; height: 28px; background: #000; border-radius: 0 0 16px 16px; position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 10; }
+.status-bar { height: 48px; padding: 0 20px; display: flex; align-items: flex-end; justify-content: space-between; font-size: 12px; color: #333; }
+.screen-content { flex: 1; overflow-y: auto; }
+.tab-bar { height: 83px; background: #f8f8f8; border-top: 0.5px solid #e0e0e0; display: flex; align-items: flex-start; padding-top: 8px; }
+.tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; }
+.tab-item .tab-label { font-size: 10px; color: #999; }
+.tab-item.active .tab-label { color: #007AFF; font-weight: 600; }
+.nav-bar { height: 44px; display: flex; align-items: center; justify-content: center; padding: 0 16px; font-size: 17px; font-weight: 600; }
+
+/* Record */
+.record-screen { display: flex; flex-direction: column; align-items: center; padding: 20px; height: 100%; }
+.record-stats { width: 100%; display: flex; justify-content: space-between; font-size: 12px; color: #666; margin-bottom: 30px; }
+.mic-btn { width: 88px; height: 88px; border-radius: 50%; background: #007AFF; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 20px rgba(0,122,255,0.3); margin: 40px 0 20px; transition: all 0.3s; }
+.mic-btn:hover { transform: scale(1.05); }
+.mic-btn.recording { background: #FF3B30; box-shadow: 0 4px 20px rgba(255,59,48,0.4); animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100% { box-shadow: 0 4px 20px rgba(255,59,48,0.4); } 50% { box-shadow: 0 4px 40px rgba(255,59,48,0.6); } }
+.mic-icon { font-size: 32px; color: #fff; }
+.record-status { font-size: 16px; font-weight: 500; color: #666; margin-top: 16px; }
+.record-hint { font-size: 12px; color: #999; text-align: center; margin-top: auto; padding-bottom: 10px; line-height: 1.8; }
+.text-toggle { font-size: 12px; color: #007AFF; margin-top: 16px; cursor: pointer; }
+.transcription-box { width: 100%; background: #f5f5f5; border-radius: 12px; padding: 12px 16px; margin-top: 16px; font-size: 14px; color: #333; line-height: 1.6; display: none; }
+.save-btn { width: 80%; height: 44px; background: #007AFF; color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 500; margin-top: 16px; cursor: pointer; display: none; }
+
+/* Contacts */
+.search-bar { margin: 8px 16px; padding: 8px 12px; background: #f2f2f7; border-radius: 10px; font-size: 14px; color: #666; }
+.contact-row { display: flex; align-items: center; padding: 12px 16px; gap: 12px; border-bottom: 0.5px solid #f0f0f0; cursor: pointer; transition: background 0.2s; }
+.contact-row:hover { background: #f8f8fa; }
+.contact-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 600; flex-shrink: 0; }
+.contact-info { flex: 1; min-width: 0; }
+.contact-name-row { display: flex; align-items: center; gap: 6px; }
+.contact-name { font-size: 15px; font-weight: 600; }
+.badge-strong { font-size: 10px; padding: 1px 5px; background: rgba(52,199,89,0.12); color: #34C759; border-radius: 3px; }
+.contact-meta { font-size: 12px; color: #8e8e93; margin-top: 3px; }
+.contact-summary { font-size: 11px; color: #8e8e93; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.contact-right { text-align: right; flex-shrink: 0; }
+.contact-right .count { font-size: 11px; color: #8e8e93; }
+.contact-right .time { font-size: 10px; color: #aeaeb2; }
+
+/* Radar */
+.radar-screen { padding: 16px; }
+.insight-card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 0.5px solid #f0f0f0; }
+.insight-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.insight-type { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 500; flex-shrink: 0; }
+.type-match { background: rgba(0,122,255,0.1); color: #007AFF; }
+.type-who { background: rgba(175,82,222,0.1); color: #AF52DE; }
+.type-peer { background: rgba(52,199,89,0.1); color: #34C759; }
+.insight-title { font-size: 14px; font-weight: 600; flex: 1; min-width: 0; }
+.badge-new { font-size: 10px; padding: 1px 5px; background: #FF3B30; color: #fff; border-radius: 3px; flex-shrink: 0; }
+.insight-content { font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 10px; }
+.insight-action { background: rgba(255,149,0,0.06); border-radius: 8px; padding: 8px 10px; font-size: 12px; color: #333; line-height: 1.5; margin-bottom: 10px; }
+.insight-action::before { content: "💡 "; }
+.insight-feedback { display: flex; gap: 8px; }
+.fb-btn { font-size: 11px; padding: 4px 10px; border-radius: 6px; border: 1px solid #e0e0e0; cursor: pointer; background: #fff; }
+.fb-btn.useful { border-color: #34C759; color: #34C759; }
+.fb-btn.later { border-color: #007AFF; color: #007AFF; }
+
+/* Modal */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 100; }
+.modal-overlay.show { display: flex; }
+.modal-content { width: 360px; max-height: 700px; background: #fff; border-radius: 16px; overflow-y: auto; padding: 24px; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.modal-close { font-size: 24px; cursor: pointer; color: #007AFF; }
+.detail-name { font-size: 22px; font-weight: 700; }
+.detail-badge { font-size: 12px; padding: 3px 8px; border-radius: 6px; }
+.detail-section { margin-top: 16px; }
+.detail-section h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #333; }
+.detail-row { font-size: 14px; color: #333; line-height: 1.8; }
+.detail-summary { background: #f5f5f5; border-radius: 10px; padding: 12px; font-size: 13px; line-height: 1.6; color: #333; }
+.detail-stats { background: #f5f5f5; border-radius: 10px; padding: 12px; }
+.stat-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; }
+.stat-row .label { color: #333; }
+.stat-row .value { color: #8e8e93; }
+
+/* Side panel */
+.side-panel { width: 380px; background: #fff; border-radius: 16px; padding: 24px; height: fit-content; max-height: 812px; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+.side-panel h2 { font-size: 18px; margin-bottom: 16px; }
+.side-panel h3 { font-size: 14px; font-weight: 600; margin: 16px 0 8px; color: #007AFF; }
+.feature-list { list-style: none; padding: 0; }
+.feature-list li { font-size: 13px; padding: 6px 0; border-bottom: 0.5px solid #f0f0f0; color: #333; line-height: 1.5; }
+.feature-list li::before { content: "✓ "; color: #34C759; font-weight: bold; }
+.highlight { background: linear-gradient(120deg, rgba(0,122,255,0.08), rgba(175,82,222,0.08)); border-radius: 8px; padding: 12px; margin: 12px 0; font-size: 12px; line-height: 1.6; }
+.stats-box { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+.stat-box { background: #f8f8fa; border-radius: 8px; padding: 10px; text-align: center; }
+.stat-box .num { font-size: 20px; font-weight: 700; color: #007AFF; }
+.stat-box .desc { font-size: 11px; color: #666; margin-top: 2px; }
+.arch-item { font-size: 12px; line-height: 1.6; padding: 4px 0; color: #333; }
+</style>
+</head>
+<body>
+
+<div class="phone" id="mainPhone">
+    <div class="phone-notch"></div>
+    <div class="status-bar"><span>9:41</span><span>100%</span></div>
+
+    <!-- Record Screen -->
+    <div class="screen-content" id="screen-record">
+        <div class="nav-bar">录入</div>
+        <div class="record-screen">
+            <div class="record-stats">
+                <span>联系人 12 人</span>
+                <span style="color:#FF9500">3 条新推送</span>
+            </div>
+            <div class="record-status" id="recordStatus">点击开始录入</div>
+            <div class="transcription-box" id="transcription"></div>
+            <div class="mic-btn" id="micBtn" onclick="toggleRecording()">
+                <span class="mic-icon">🎙️</span>
+            </div>
+            <button class="save-btn" id="saveBtn" onclick="showResult()">保存到名片夹</button>
+            <span class="text-toggle">不方便说话？用文字输入</span>
+            <div class="record-hint">点击麦克风开始录入<br>例如：「今天见了王总，做建材的，在深圳，人很爽快」</div>
+        </div>
+    </div>
+
+    <!-- Contacts Screen -->
+    <div class="screen-content" id="screen-contacts" style="display:none;">
+        <div class="nav-bar">名片夹</div>
+        <div class="search-bar">🔍 搜索姓名、公司、行业...</div>
+        <div class="contact-row" onclick="showDetail('wang')">
+            <div class="contact-avatar" style="background:#5856D6">王</div>
+            <div class="contact-info">
+                <div class="contact-name-row"><span class="contact-name">王总</span><span class="badge-strong">强关系</span></div>
+                <div class="contact-meta">行业：建材 &nbsp; 公司：鑫达建材</div>
+                <div class="contact-summary">深圳做建材批发，产能有空余在找合作渠道，约了下周三再谈...</div>
+            </div>
+            <div class="contact-right"><div class="count">互动5次</div><div class="time">今天</div></div>
+        </div>
+        <div class="contact-row" onclick="showDetail('li')">
+            <div class="contact-avatar" style="background:#FF9500">李</div>
+            <div class="contact-info">
+                <div class="contact-name-row"><span class="contact-name">李姐</span></div>
+                <div class="contact-meta">行业：装修 &nbsp; 公司：美家装饰</div>
+                <div class="contact-summary">高端家装，深圳十几个楼盘在施工，需要稳定建材供应商</div>
+            </div>
+            <div class="contact-right"><div class="count">互动3次</div><div class="time">昨天</div></div>
+        </div>
+        <div class="contact-row" onclick="showDetail('zhang')">
+            <div class="contact-avatar" style="background:#34C759">张</div>
+            <div class="contact-info">
+                <div class="contact-name-row"><span class="contact-name">张总</span></div>
+                <div class="contact-meta">行业：投资 &nbsp; 公司：鼎丰资本</div>
+                <div class="contact-summary">看消费赛道，投过两个建材品牌，对供应链效率提升感兴趣</div>
+            </div>
+            <div class="contact-right"><div class="count">互动2次</div><div class="time">3天前</div></div>
+        </div>
+        <div class="contact-row">
+            <div class="contact-avatar" style="background:#FF2D55">陈</div>
+            <div class="contact-info">
+                <div class="contact-name-row"><span class="contact-name">陈哥</span></div>
+                <div class="contact-meta">行业：物流 &nbsp; 公司：速达供应链</div>
+                <div class="contact-summary">华南建材物流配送，运力充足在找稳定货源</div>
+            </div>
+            <div class="contact-right"><div class="count">互动1次</div><div class="time">1周前</div></div>
+        </div>
+        <div class="contact-row">
+            <div class="contact-avatar" style="background:#007AFF">刘</div>
+            <div class="contact-info">
+                <div class="contact-name-row"><span class="contact-name">刘总</span></div>
+                <div class="contact-meta">行业：电商 &nbsp; 公司：居优选</div>
+                <div class="contact-summary">建材电商平台月GMV两千万，在找优质供应商入驻</div>
+            </div>
+            <div class="contact-right"><div class="count">互动2次</div><div class="time">1周前</div></div>
+        </div>
+    </div>
+
+    <!-- Radar Screen -->
+    <div class="screen-content" id="screen-radar" style="display:none; background:#f5f5f7;">
+        <div class="nav-bar">雷达</div>
+        <div class="radar-screen">
+            <div class="insight-card">
+                <div class="insight-header">
+                    <span class="insight-type type-match">人脉匹配</span>
+                    <span class="insight-title">王总的建材 → 李姐的装修：天然供应链</span>
+                    <span class="badge-new">新</span>
+                </div>
+                <div class="insight-content">王总（鑫达建材）产能有空余正在找新渠道，李姐（美家装饰）十几个楼盘急需稳定建材供应商。典型的上游有货、下游有需求，中间只差一个引荐。</div>
+                <div class="insight-action">下次见李姐时说："我认识个做建材批发的王总，鑫达建材的，产能充足价格有优势，你们可以聊聊供货合作。"</div>
+                <div class="insight-feedback"><span class="fb-btn useful">有用</span><span class="fb-btn">不相关</span><span class="fb-btn later">稍后</span></div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-header">
+                    <span class="insight-type type-match">人脉匹配</span>
+                    <span class="insight-title">陈哥物流 + 王总配送需求 = 降本机会</span>
+                    <span class="badge-new">新</span>
+                </div>
+                <div class="insight-content">王总做建材批发需要物流能力，陈哥（速达供应链）做华南建材物流且运力充足在找货源。产业链上下游必然互补——王总出货，陈哥配送，双方降本增效。</div>
+                <div class="insight-action">建三方群："王总、陈哥，你们一个有货一个有车，帮你们拉个群对接配送合作。"</div>
+                <div class="insight-feedback"><span class="fb-btn useful">有用</span><span class="fb-btn">不相关</span><span class="fb-btn later">稍后</span></div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-header">
+                    <span class="insight-type type-peer">资源互补</span>
+                    <span class="insight-title">张总投资视角 × 王总建材规模 = 融资可能</span>
+                </div>
+                <div class="insight-content">张总（鼎丰资本）看消费赛道且投过建材品牌，对供应链效率感兴趣。王总的鑫达建材如有扩张计划，张总可能是潜在资方。需先确认王总融资意向。</div>
+                <div class="insight-action">下次见王总探口风："鑫达规模做得不错，有没有考虑引入资本加速扩张？我认识个投建材赛道的基金。"</div>
+                <div class="insight-feedback"><span class="fb-btn useful">有用</span><span class="fb-btn">不相关</span><span class="fb-btn later">稍后</span></div>
+            </div>
+            <div class="insight-card">
+                <div class="insight-header">
+                    <span class="insight-type type-who">谁认识TA</span>
+                    <span class="insight-title">刘总电商 + 王总线上需求 = 双向价值</span>
+                </div>
+                <div class="insight-content">王总提到想拓展线上业务，刘总（居优选）建材电商平台月GMV两千万正在招商。双向价值——王总获线上渠道，刘总获优质供应商。</div>
+                <div class="insight-action">直接给双方各发消息引荐，然后拉群。</div>
+                <div class="insight-feedback"><span class="fb-btn useful">有用</span><span class="fb-btn">不相关</span><span class="fb-btn later">稍后</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-bar">
+        <div class="tab-item active" id="tab-record" onclick="switchTab('record')"><span class="tab-label">录入</span></div>
+        <div class="tab-item" id="tab-contacts" onclick="switchTab('contacts')"><span class="tab-label">名片夹</span></div>
+        <div class="tab-item" id="tab-radar" onclick="switchTab('radar')"><span class="tab-label">雷达</span></div>
+        <div class="tab-item" id="tab-network" onclick="switchTab('contacts')"><span class="tab-label">人脉网</span></div>
+        <div class="tab-item" onclick="switchTab('record')"><span class="tab-label">我的</span></div>
+    </div>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detailModal">
+    <div class="modal-content" id="modalBody"></div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel">
+    <h2>人脉雷达 v2.1</h2>
+    <p style="font-size:13px;color:#666;margin-bottom:16px;">语音驱动的AI人脉管理工具。说一段话，AI帮你存、帮你连、帮你想。</p>
+
+    <div class="stats-box">
+        <div class="stat-box"><div class="num">3,500+</div><div class="desc">总代码行数</div></div>
+        <div class="stat-box"><div class="num">15</div><div class="desc">API端点</div></div>
+        <div class="stat-box"><div class="num">5层</div><div class="desc">匹配分析深度</div></div>
+        <div class="stat-box"><div class="num">1000万</div><div class="desc">架构目标用户</div></div>
+    </div>
+
+    <h3>v2.1 核心更新</h3>
+    <ul class="feature-list">
+        <li>文字标签替代图标（"行业：建材"而非图标），对年长用户友好</li>
+        <li>新增"互动次数"+"最近互动时间"维度</li>
+        <li>AI自动生成完整备注摘要（不丢信息，不只是标签）</li>
+        <li>匹配引擎5层深度分析（供需链/资源互补/信息差/社交货币/时机）</li>
+        <li>只推高价值匹配（priority>=4），拒绝垃圾推送</li>
+        <li>行动建议含具体话术和场景</li>
+    </ul>
+
+    <div class="highlight">
+        <strong>核心差异化：</strong>不是简单的"同行业匹配"，而是从产业链上下游、供需互补、信息差套利等底层商业逻辑出发，发现真正有价值的连接。每条推送都有可直接使用的话术。
+    </div>
+
+    <h3>千万级架构设计</h3>
+    <ul class="feature-list">
+        <li>PostgreSQL 16 + 连接池（pool_size=20, max_overflow=30）</li>
+        <li>Redis 7 缓存层（热数据/限流/Session）</li>
+        <li>Nginx负载均衡 + 水平扩展（docker compose --scale api=N）</li>
+        <li>LLM并发信号量（防thundering herd）</li>
+        <li>复合数据库索引（user+updated, user+industry, user+unread）</li>
+        <li>请求追踪中间件（request_id + 延迟日志）</li>
+        <li>无状态API设计，支持多实例部署</li>
+    </ul>
+
+    <h3>技术栈</h3>
+    <ul class="feature-list">
+        <li>iOS: SwiftUI + Apple Speech Framework (中文语音)</li>
+        <li>后端: FastAPI + SQLAlchemy 2.0 Async + PostgreSQL 16</li>
+        <li>缓存: Redis 7 (LRU策略)</li>
+        <li>AI: Claude Sonnet (结构化提取 + 深度匹配)</li>
+        <li>部署: Docker Compose + Nginx + 一键deploy.sh</li>
+    </ul>
+
+    <h3>操作说明</h3>
+    <p style="font-size:12px;color:#666;line-height:1.6;">
+        点击底部Tab切换页面。<br>
+        点击麦克风按钮模拟录音。<br>
+        点击名片夹联系人查看详情。<br>
+        雷达页展示AI深度匹配效果。
+    </p>
+</div>
+
+<script>
+function switchTab(tab) {
+    document.querySelectorAll('.screen-content').forEach(s => s.style.display = 'none');
+    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+    document.getElementById('screen-' + tab).style.display = '';
+    document.getElementById('tab-' + tab).classList.add('active');
+}
+
+let isRecording = false;
+function toggleRecording() {
+    const btn = document.getElementById('micBtn');
+    const status = document.getElementById('recordStatus');
+    const trans = document.getElementById('transcription');
+    const saveBtn = document.getElementById('saveBtn');
+    if (!isRecording) {
+        isRecording = true;
+        btn.classList.add('recording');
+        btn.innerHTML = '<span class="mic-icon">⏹️</span>';
+        status.textContent = '正在听...';
+        trans.style.display = 'block';
+        trans.textContent = '';
+        saveBtn.style.display = 'none';
+        const text = '今天见了王总，做建材批发的，公司叫鑫达建材，在深圳，人很爽快。他说最近产能有空余，在找新的合作渠道，聊了半小时，约了下周三再见面具体谈。';
+        let i = 0;
+        const iv = setInterval(() => {
+            if (i < text.length && isRecording) { trans.textContent += text[i]; i++; }
+            else clearInterval(iv);
+        }, 50);
+    } else {
+        isRecording = false;
+        btn.classList.remove('recording');
+        btn.innerHTML = '<span class="mic-icon">🎙️</span>';
+        status.textContent = '识别完成，确认保存？';
+        saveBtn.style.display = 'block';
+    }
+}
+
+function showResult() {
+    switchTab('contacts');
+    document.getElementById('saveBtn').style.display = 'none';
+    document.getElementById('transcription').style.display = 'none';
+    document.getElementById('recordStatus').textContent = '点击开始录入';
+}
+
+const D = {
+    wang: { name:'王总', badge:'强关系', bc:'#34C759', industry:'建材', company:'鑫达建材', city:'深圳', position:'总经理', impression:'爽快、实在', needs:'新合作渠道、线上拓展', resources:'华南建材批发渠道、产能充足', summary:'王总，深圳做建材批发的，公司鑫达建材，任总经理。第一次见是朋友介绍的，人很爽快实在，当场聊了半小时。手上有华南地区建材批发渠道，产能有空余在找新合作伙伴。第二次聊时提到想拓展线上业务，对电商渠道有兴趣。约了下周三再见面谈合作方向。', ic:5, lt:'今天', cr:'2026-04-20', sc:85 },
+    li: { name:'李姐', badge:'一般', bc:'#007AFF', industry:'装修', company:'美家装饰', city:'深圳', position:'创始人', impression:'专业、细致', needs:'稳定建材供应商', resources:'高端家装设计、十几个楼盘项目', summary:'李姐，深圳美家装饰创始人，做高端家装设计。手上十几个楼盘在同时施工，体量很大。目前最头疼的是建材供应不稳定，之前合作的供应商经常断货。人很专业细致，对材料品质要求高。在行业聚会上认识的。', ic:3, lt:'昨天', cr:'2026-04-25', sc:55 },
+    zhang: { name:'张总', badge:'仅自述', bc:'#8e8e93', industry:'投资', company:'鼎丰资本', city:'北京', position:'合伙人', impression:'低调、专业', needs:'消费赛道优质项目', resources:'资本、建材投资经验', summary:'张总，鼎丰资本合伙人，base北京，看消费赛道。投过两个建材品牌，对供应链效率提升项目感兴趣。人比较低调，话不多但逻辑清晰。在行业论坛上认识的，加了微信还没深聊。', ic:2, lt:'3天前', cr:'2026-04-30', sc:30 }
+};
+
+function showDetail(id) {
+    const d = D[id]; if (!d) return;
+    document.getElementById('modalBody').innerHTML = `
+        <div class="modal-header">
+            <span class="detail-name">${d.name}</span>
+            <span class="detail-badge" style="background:${d.bc}22;color:${d.bc}">${d.badge}</span>
+            <span class="modal-close" onclick="closeDetail()">✕</span>
+        </div>
+        <div class="detail-section">
+            <div class="detail-row">行业：${d.industry}</div>
+            <div class="detail-row">公司：${d.company}</div>
+            <div class="detail-row">城市：${d.city}</div>
+            <div class="detail-row">职位：${d.position}</div>
+            <div class="detail-row">印象：${d.impression}</div>
+            <div class="detail-row" style="color:#FF9500">需求：${d.needs}</div>
+            <div class="detail-row" style="color:#34C759">资源：${d.resources}</div>
+        </div>
+        <div class="detail-section"><h3>备注摘要</h3><div class="detail-summary">${d.summary}</div></div>
+        <div class="detail-section"><h3>互动记录</h3><div class="detail-stats">
+            <div class="stat-row"><span class="label">互动次数</span><span class="value">${d.ic} 次</span></div>
+            <div class="stat-row"><span class="label">最近互动</span><span class="value">${d.lt}</span></div>
+            <div class="stat-row"><span class="label">首次录入</span><span class="value">${d.cr}</span></div>
+            <div class="stat-row"><span class="label">置信度</span><span class="value">${d.sc}%</span></div>
+            <div class="stat-row"><span class="label">关系等级</span><span class="value">${d.badge}</span></div>
+        </div></div>`;
+    document.getElementById('detailModal').classList.add('show');
+}
+function closeDetail() { document.getElementById('detailModal').classList.remove('show'); }
+document.getElementById('detailModal').addEventListener('click', function(e) { if (e.target === this) closeDetail(); });
+</script>
+</body>
+</html>
