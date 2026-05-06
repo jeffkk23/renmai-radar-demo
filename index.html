@@ -96,15 +96,11 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'PingFang SC', 
 .stat-box .desc { font-size: 11px; color: #666; margin-top: 2px; }
 .arch-item { font-size: 12px; line-height: 1.6; padding: 4px 0; color: #333; }
 
-/* Mobile: remove phone frame, go full-screen */
+/* Mobile: keep phone frame, fit viewport */
 @media (max-width: 600px) {
-    body { padding: 0; gap: 0; background: #fff; }
-    .phone { width: 100%; height: 100vh; height: 100dvh; border-radius: 0; box-shadow: none; }
-    .phone-notch { display: none; }
-    .status-bar { display: none; }
+    body { padding: 12px 0 0; gap: 0; align-items: center; justify-content: flex-start; }
+    .phone { width: 355px; max-width: 94vw; height: 750px; max-height: 90vh; }
     .side-panel { display: none; }
-    .tab-bar { padding-bottom: env(safe-area-inset-bottom, 20px); height: auto; min-height: 60px; }
-    .nav-bar { padding-top: env(safe-area-inset-top, 8px); }
     .modal-content { width: 92vw; max-height: 85vh; }
 }
 
@@ -112,9 +108,104 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'PingFang SC', 
 .qr-section { text-align: center; margin: 20px 0; padding: 16px; background: #f8f8fa; border-radius: 12px; }
 .qr-section canvas { margin: 12px auto 8px; display: block; }
 .qr-url { font-size: 11px; color: #8e8e93; word-break: break-all; }
+
+/* Onboarding */
+.onboarding { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; }
+.ob-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 32px; text-align: center; opacity: 0; transition: opacity 0.5s ease, transform 0.5s ease; transform: translateX(60px); pointer-events: none; }
+.ob-slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
+.ob-slide.exit { opacity: 0; transform: translateX(-60px); }
+.ob-s1 { background: linear-gradient(145deg, #0a0a1a 0%, #1a1a3e 40%, #0d2137 100%); }
+.ob-s2 { background: linear-gradient(145deg, #0d2137 0%, #1a1a3e 50%, #2d1b4e 100%); }
+.ob-s3 { background: linear-gradient(145deg, #2d1b4e 0%, #1a1a3e 50%, #0a0a1a 100%); }
+.ob-emoji { font-size: 64px; margin-bottom: 32px; filter: drop-shadow(0 4px 20px rgba(255,255,255,0.15)); }
+.ob-title { font-size: 28px; font-weight: 800; color: #fff; line-height: 1.3; margin-bottom: 16px; letter-spacing: -0.5px; }
+.ob-title span { background: linear-gradient(90deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.ob-desc { font-size: 15px; color: rgba(255,255,255,0.7); line-height: 1.8; max-width: 320px; }
+.ob-desc strong { color: rgba(255,255,255,0.95); font-weight: 600; }
+.ob-flow { display: flex; align-items: center; gap: 12px; margin: 24px 0 8px; flex-wrap: wrap; justify-content: center; }
+.ob-flow-item { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 10px 16px; font-size: 13px; color: rgba(255,255,255,0.85); backdrop-filter: blur(8px); }
+.ob-flow-arrow { font-size: 18px; color: rgba(96,165,250,0.8); }
+.ob-dots { display: flex; gap: 8px; margin-top: 40px; }
+.ob-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.25); transition: all 0.3s; }
+.ob-dot.active { background: #60a5fa; width: 24px; border-radius: 4px; }
+.ob-btn { margin-top: 32px; padding: 14px 48px; border-radius: 14px; border: none; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.ob-btn-next { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(8px); }
+.ob-btn-next:hover { background: rgba(255,255,255,0.2); }
+.ob-btn-start { background: linear-gradient(135deg, #007AFF, #5856D6); color: #fff; box-shadow: 0 4px 24px rgba(0,122,255,0.4); }
+.ob-btn-start:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(0,122,255,0.5); }
+.ob-agent-pair { display: flex; align-items: center; gap: 20px; margin: 20px 0; }
+.ob-agent-box { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px 20px; text-align: center; }
+.ob-agent-box .emoji { font-size: 36px; margin-bottom: 6px; }
+.ob-agent-box .label { font-size: 12px; color: rgba(255,255,255,0.6); }
+.ob-agent-link { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.ob-agent-link .bolt { font-size: 24px; animation: obPulse 2s ease-in-out infinite; }
+.ob-agent-link .txt { font-size: 10px; color: rgba(96,165,250,0.8); white-space: nowrap; }
+@keyframes obPulse { 0%,100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.15); } }
 </style>
 </head>
 <body>
+
+<!-- Onboarding -->
+<div class="onboarding" id="onboarding">
+    <!-- Slide 1: 概念引入 -->
+    <div class="ob-slide ob-s1 active" id="ob-1">
+        <div class="ob-emoji">🧠</div>
+        <div class="ob-title">你的专属<br><span>人脉秘书 Agent</span></div>
+        <div class="ob-desc">
+            每次说一段话，就是在<strong>喂养你的 AI 秘书</strong>。<br>
+            它帮你记住每个人、分析每段关系、<br>发现你看不到的机会。
+        </div>
+        <div class="ob-dots"><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div></div>
+        <button class="ob-btn ob-btn-next" onclick="obNext(1)">了解更多</button>
+    </div>
+
+    <!-- Slide 2: 信息喂养 → 智能推送 -->
+    <div class="ob-slide ob-s2" id="ob-2">
+        <div class="ob-emoji">🎙️</div>
+        <div class="ob-title">你说，<span>Agent 懂</span></div>
+        <div class="ob-flow">
+            <div class="ob-flow-item">🗣️ 语音录入</div>
+            <div class="ob-flow-arrow">→</div>
+            <div class="ob-flow-item">🧠 Agent 理解</div>
+            <div class="ob-flow-arrow">→</div>
+            <div class="ob-flow-item">💡 智能推送</div>
+        </div>
+        <div class="ob-desc" style="margin-top:20px;">
+            不是通讯录，不是 CRM。<br>
+            你的秘书会<strong>主动分析</strong>供需关系、产业链上下游、<br>
+            信息差和时机，帮你找到<strong>真正该见的人</strong>。
+        </div>
+        <div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot active"></div><div class="ob-dot"></div></div>
+        <button class="ob-btn ob-btn-next" onclick="obNext(2)">继续</button>
+    </div>
+
+    <!-- Slide 3: Agent × Agent 交互 -->
+    <div class="ob-slide ob-s3" id="ob-3">
+        <div class="ob-emoji">🤝</div>
+        <div class="ob-title"><span>你的秘书</span> × <span>他的秘书</span></div>
+        <div class="ob-agent-pair">
+            <div class="ob-agent-box">
+                <div class="emoji">🤖</div>
+                <div class="label">你的人脉秘书</div>
+            </div>
+            <div class="ob-agent-link">
+                <div class="bolt">⚡</div>
+                <div class="txt">自动匹配</div>
+            </div>
+            <div class="ob-agent-box">
+                <div class="emoji">🤖</div>
+                <div class="label">好友的人脉秘书</div>
+            </div>
+        </div>
+        <div class="ob-desc">
+            连接好友后，<strong>两个 Agent 自动交互</strong>，<br>
+            从双方人脉中挖掘互补资源和合作机会。<br>
+            你什么都不用做，秘书帮你搞定。
+        </div>
+        <div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot active"></div></div>
+        <button class="ob-btn ob-btn-start" onclick="obStart()">开始体验</button>
+    </div>
+</div>
 
 <div class="phone" id="mainPhone">
     <div class="phone-notch"></div>
@@ -375,47 +466,37 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'PingFang SC', 
 <!-- Side Panel -->
 <div class="side-panel">
     <h2>人脉雷达 v2.1</h2>
-    <p style="font-size:13px;color:#666;margin-bottom:16px;">语音驱动的AI人脉管理工具。说一段话，AI帮你存、帮你连、帮你想。</p>
+    <p style="font-size:13px;color:#666;margin-bottom:16px;">你的专属<strong>人脉秘书 Agent</strong>。说一段话，AI秘书帮你记住、分析、连接一切人脉。</p>
+
+    <div class="highlight" style="background:linear-gradient(120deg,rgba(96,165,250,0.1),rgba(167,139,250,0.1));border:1px solid rgba(96,165,250,0.15);">
+        <strong>核心理念：</strong>每次语音录入 = 给你的 Agent 喂数据。你的人脉秘书吸收足够信息后，会主动推送高价值洞察；连接好友后，<strong>你的秘书 × 他的秘书</strong>自动交互，挖掘双方人脉中的合作机会。
+    </div>
 
     <div class="stats-box">
-        <div class="stat-box"><div class="num">3,500+</div><div class="desc">总代码行数</div></div>
-        <div class="stat-box"><div class="num">15</div><div class="desc">API端点</div></div>
-        <div class="stat-box"><div class="num">5层</div><div class="desc">匹配分析深度</div></div>
+        <div class="stat-box"><div class="num">5层</div><div class="desc">Agent分析深度</div></div>
         <div class="stat-box"><div class="num">1000万</div><div class="desc">架构目标用户</div></div>
     </div>
 
-    <h3>v2.1 核心更新</h3>
+    <h3>Agent 的两大工作模式</h3>
     <ul class="feature-list">
-        <li>文字标签替代图标（"行业：建材"而非图标），对年长用户友好</li>
-        <li>新增"互动次数"+"最近互动时间"维度</li>
-        <li>AI自动生成完整备注摘要（不丢信息，不只是标签）</li>
-        <li>匹配引擎5层深度分析（供需链/资源互补/信息差/社交货币/时机）</li>
-        <li>只推高价值匹配（priority>=4），拒绝垃圾推送</li>
-        <li>行动建议含具体话术和场景</li>
+        <li><strong>模式一：智能推送</strong> — Agent 吸收你的人脉数据后，从供需链/资源互补/信息差/社交货币/时机 5层分析，主动发现你看不到的机会</li>
+        <li><strong>模式二：秘书×秘书</strong> — 连接好友后，两个Agent自动交互，匹配双方人脉中的互补资源和合作可能</li>
     </ul>
 
-    <div class="highlight">
-        <strong>核心差异化：</strong>不是简单的"同行业匹配"，而是从产业链上下游、供需互补、信息差套利等底层商业逻辑出发，发现真正有价值的连接。每条推送都有可直接使用的话术。
-    </div>
-
-    <h3>千万级架构设计</h3>
+    <h3>产品特点</h3>
     <ul class="feature-list">
-        <li>PostgreSQL 16 + 连接池（pool_size=20, max_overflow=30）</li>
-        <li>Redis 7 缓存层（热数据/限流/Session）</li>
-        <li>Nginx负载均衡 + 水平扩展（docker compose --scale api=N）</li>
-        <li>LLM并发信号量（防thundering herd）</li>
-        <li>复合数据库索引（user+updated, user+industry, user+unread）</li>
-        <li>请求追踪中间件（request_id + 延迟日志）</li>
-        <li>无状态API设计，支持多实例部署</li>
+        <li>唯一操作：说一段话，Agent完成一切（录入/分析/匹配/推送）</li>
+        <li>AI生成完整备注摘要，不丢失任何细节</li>
+        <li>每条推送含可直接使用的行动话术</li>
+        <li>清晰文字标签，对所有年龄段友好</li>
     </ul>
 
-    <h3>技术栈</h3>
+    <h3>技术架构</h3>
     <ul class="feature-list">
-        <li>iOS: SwiftUI + Apple Speech Framework (中文语音)</li>
-        <li>后端: FastAPI + SQLAlchemy 2.0 Async + PostgreSQL 16</li>
-        <li>缓存: Redis 7 (LRU策略)</li>
-        <li>AI: Claude Sonnet (结构化提取 + 深度匹配)</li>
-        <li>部署: Docker Compose + Nginx + 一键deploy.sh</li>
+        <li>iOS: SwiftUI + Apple Speech (中文语音)</li>
+        <li>后端: FastAPI + PostgreSQL 16 + Redis 7</li>
+        <li>AI: Claude Sonnet (结构化 + 5层匹配引擎)</li>
+        <li>千万用户：连接池 + Nginx LB + 水平扩展</li>
     </ul>
 
     <h3>操作说明</h3>
@@ -423,7 +504,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'PingFang SC', 
         点击底部Tab切换页面。<br>
         点击麦克风按钮模拟录音。<br>
         点击名片夹联系人查看详情。<br>
-        雷达页展示AI深度匹配效果。
+        雷达页展示Agent智能匹配效果。<br>
+        人脉网展示秘书×秘书交互结果。
     </p>
 
     <div class="qr-section">
@@ -512,6 +594,21 @@ function showDetail(id) {
 }
 function closeDetail() { document.getElementById('detailModal').classList.remove('show'); }
 document.getElementById('detailModal').addEventListener('click', function(e) { if (e.target === this) closeDetail(); });
+
+/* Onboarding logic */
+function obNext(current) {
+    var cur = document.getElementById('ob-' + current);
+    var next = document.getElementById('ob-' + (current + 1));
+    cur.classList.remove('active');
+    cur.classList.add('exit');
+    setTimeout(function() { next.classList.add('active'); }, 100);
+}
+function obStart() {
+    var ob = document.getElementById('onboarding');
+    ob.style.transition = 'opacity 0.4s ease';
+    ob.style.opacity = '0';
+    setTimeout(function() { ob.style.display = 'none'; }, 400);
+}
 
 /* Minimal QR Code generator (MIT License) — self-contained, no CDN needed */
 (function(){function QR(t,e){e=e||"M";var r={L:1,M:0,Q:3,H:2}[e],n=1,o,a;for(n=1;n<=40;n++){a=[0,26,44,70,100,134,172,196,242,292,346,404,466,532,581,655,733,815,901,991,1085,1156,1258,1364,1474,1588,1706,1828,1921,2051,2185,2323,2465,2611,2761,2876,3034,3196,3362,3532][n-1];if(t.length<=Math.floor(a*[0.07,0.15,0.25,0.3][[1,0,3,2].indexOf(r)]*2))break}o=n;var s=o*4+17,c=Array.from({length:s},()=>Array(s).fill(null));function p(x,y,v){if(x>=0&&x<s&&y>=0&&y<s)c[y][x]=v?1:0}function fp(cx,cy){for(var i=-3;i<=3;i++)for(var j=-3;j<=3;j++){var m=Math.max(Math.abs(i),Math.abs(j));p(cx+j,cy+i,m!==2&&m!==4)}}fp(3,3);fp(s-4,3);fp(3,s-4);for(var i=8;i<s-8;i++){p(i,6,i%2===0);p(6,i,i%2===0)}if(o>=2){var al=[];if(o===2)al=[6,18];else if(o<=6){var f=Math.floor(o/7)+1,st=6,en=s-7,sp=Math.ceil((en-st)/(f)),ps=[st];for(var k=1;k<f;k++)ps.push(st+sp*k);ps.push(en);al=ps}if(al.length)for(var ii=0;ii<al.length;ii++)for(var jj=0;jj<al.length;jj++){if(ii===0&&jj===0)continue;if(ii===0&&jj===al.length-1)continue;if(ii===al.length-1&&jj===0)continue;for(var di=-2;di<=2;di++)for(var dj=-2;dj<=2;dj++){var mx=Math.max(Math.abs(di),Math.abs(dj));p(al[jj]+dj,al[ii]+di,mx!==1&&mx!==3)}}}for(var i=0;i<s;i++)for(var j=0;j<s;j++)if(c[i][j]===null)c[i][j]=0;var data=[];for(var i=0;i<t.length;i++)data.push(t.charCodeAt(i));var cv=document.createElement('canvas'),sz=5,mg=4;cv.width=cv.height=(s+mg*2)*sz;var cx2=cv.getContext('2d');cx2.fillStyle='#fff';cx2.fillRect(0,0,cv.width,cv.height);cx2.fillStyle='#000';for(var i=0;i<s;i++)for(var j=0;j<s;j++)if(c[i][j])cx2.fillRect((j+mg)*sz,(i+mg)*sz,sz,sz);return cv}
