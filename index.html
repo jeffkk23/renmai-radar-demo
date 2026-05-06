@@ -218,12 +218,135 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'PingFang SC', 
         </div>
     </div>
 
+    <!-- Network Screen -->
+    <div class="screen-content" id="screen-network" style="display:none;">
+        <div class="nav-bar">人脉网</div>
+        <div style="padding:16px;">
+            <!-- My invite code -->
+            <div style="background:#f5f5f7;border-radius:12px;padding:16px;margin-bottom:16px;">
+                <div style="font-size:13px;color:#8e8e93;margin-bottom:8px;">我的邀请码</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font-size:28px;font-weight:700;letter-spacing:4px;color:#007AFF;">X7K9M2</span>
+                    <span onclick="alert('邀请码已复制！')" style="font-size:13px;color:#007AFF;cursor:pointer;padding:6px 12px;border:1px solid #007AFF;border-radius:8px;">复制</span>
+                </div>
+                <div style="font-size:11px;color:#aeaeb2;margin-top:8px;">见面时让对方输入你的邀请码，AI将自动匹配双方人脉资源</div>
+            </div>
+
+            <!-- Connect input -->
+            <div style="background:#fff;border-radius:12px;padding:16px;margin-bottom:16px;border:0.5px solid #e0e0e0;">
+                <div style="font-size:14px;font-weight:600;margin-bottom:10px;">输入对方邀请码</div>
+                <div style="display:flex;gap:8px;">
+                    <div style="flex:1;background:#f2f2f7;border-radius:8px;padding:10px 12px;font-size:14px;color:#999;">请输入6位邀请码</div>
+                    <div style="background:#007AFF;color:#fff;border-radius:8px;padding:10px 16px;font-size:14px;cursor:pointer;" onclick="alert('连接成功！AI正在匹配双方人脉资源...')">连接</div>
+                </div>
+            </div>
+
+            <!-- Connections list -->
+            <div style="font-size:14px;font-weight:600;margin-bottom:12px;">已连接 (2人)</div>
+
+            <div style="background:#fff;border-radius:12px;overflow:hidden;border:0.5px solid #e0e0e0;">
+                <div style="display:flex;align-items:center;padding:14px 16px;border-bottom:0.5px solid #f0f0f0;">
+                    <div style="width:40px;height:40px;border-radius:50%;background:#AF52DE;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;margin-right:12px;">赵</div>
+                    <div style="flex:1;">
+                        <div style="font-size:15px;font-weight:600;">赵哥</div>
+                        <div style="font-size:12px;color:#8e8e93;">恒信地产 &nbsp; 连接于 2026-04-28</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:11px;color:#34C759;">3个匹配</div>
+                        <div style="font-size:10px;color:#aeaeb2;">查看详情</div>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;padding:14px 16px;">
+                    <div style="width:40px;height:40px;border-radius:50%;background:#FF9500;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;margin-right:12px;">周</div>
+                    <div style="flex:1;">
+                        <div style="font-size:15px;font-weight:600;">周姐</div>
+                        <div style="font-size:12px;color:#8e8e93;">华南设计院 &nbsp; 连接于 2026-05-01</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:11px;color:#34C759;">1个匹配</div>
+                        <div style="font-size:10px;color:#aeaeb2;">查看详情</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Match result card -->
+            <div style="margin-top:16px;background:linear-gradient(135deg,rgba(0,122,255,0.06),rgba(52,199,89,0.06));border-radius:12px;padding:16px;border:0.5px solid rgba(0,122,255,0.15);">
+                <div style="font-size:13px;font-weight:600;color:#007AFF;margin-bottom:8px;">与赵哥的资源匹配结果</div>
+                <div style="font-size:12px;color:#666;line-height:1.6;">
+                    发现3个高价值互补：<br>
+                    1. 你的王总（建材）↔ 赵哥的马总（地产开发）— 建材直供机会<br>
+                    2. 你的李姐（装修）↔ 赵哥的吴总（精装楼盘）— 装修承包对接<br>
+                    3. 赵哥的马总 ↔ 你的张总（投资）— 地产项目融资
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Screen -->
+    <div class="screen-content" id="screen-profile" style="display:none;">
+        <div class="nav-bar">我的</div>
+        <div style="padding:16px;">
+            <!-- User card -->
+            <div style="display:flex;align-items:center;padding:20px 16px;background:#f5f5f7;border-radius:12px;margin-bottom:16px;">
+                <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#007AFF,#5856D6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;font-weight:700;margin-right:16px;">冯</div>
+                <div>
+                    <div style="font-size:18px;font-weight:700;">冯卓成</div>
+                    <div style="font-size:13px;color:#8e8e93;margin-top:2px;">138****8888</div>
+                    <div style="font-size:12px;color:#007AFF;margin-top:4px;">邀请码：X7K9M2</div>
+                </div>
+            </div>
+
+            <!-- Stats grid -->
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">
+                <div style="background:#fff;border-radius:10px;padding:14px;text-align:center;border:0.5px solid #f0f0f0;">
+                    <div style="font-size:24px;font-weight:700;color:#007AFF;">12</div>
+                    <div style="font-size:11px;color:#8e8e93;margin-top:2px;">联系人</div>
+                </div>
+                <div style="background:#fff;border-radius:10px;padding:14px;text-align:center;border:0.5px solid #f0f0f0;">
+                    <div style="font-size:24px;font-weight:700;color:#34C759;">8</div>
+                    <div style="font-size:11px;color:#8e8e93;margin-top:2px;">AI推送</div>
+                </div>
+                <div style="background:#fff;border-radius:10px;padding:14px;text-align:center;border:0.5px solid #f0f0f0;">
+                    <div style="font-size:24px;font-weight:700;color:#AF52DE;">2</div>
+                    <div style="font-size:11px;color:#8e8e93;margin-top:2px;">已连接</div>
+                </div>
+            </div>
+
+            <!-- Menu items -->
+            <div style="background:#fff;border-radius:12px;overflow:hidden;border:0.5px solid #e0e0e0;">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:0.5px solid #f0f0f0;cursor:pointer;">
+                    <span style="font-size:15px;">编辑个人信息</span>
+                    <span style="color:#c7c7cc;">›</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:0.5px solid #f0f0f0;cursor:pointer;">
+                    <span style="font-size:15px;">置信度说明</span>
+                    <span style="color:#c7c7cc;">›</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:0.5px solid #f0f0f0;cursor:pointer;">
+                    <span style="font-size:15px;">数据导出</span>
+                    <span style="color:#c7c7cc;">›</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:0.5px solid #f0f0f0;cursor:pointer;">
+                    <span style="font-size:15px;">使用帮助</span>
+                    <span style="color:#c7c7cc;">›</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;">
+                    <span style="font-size:15px;">关于人脉雷达</span>
+                    <span style="font-size:12px;color:#8e8e93;">v2.1</span>
+                </div>
+            </div>
+
+            <!-- Logout -->
+            <div onclick="alert('已退出登录')" style="margin-top:16px;background:#fff;border-radius:12px;padding:14px;text-align:center;color:#FF3B30;font-size:15px;cursor:pointer;border:0.5px solid #e0e0e0;">退出登录</div>
+        </div>
+    </div>
+
     <div class="tab-bar">
         <div class="tab-item active" id="tab-record" onclick="switchTab('record')"><span class="tab-label">录入</span></div>
         <div class="tab-item" id="tab-contacts" onclick="switchTab('contacts')"><span class="tab-label">名片夹</span></div>
         <div class="tab-item" id="tab-radar" onclick="switchTab('radar')"><span class="tab-label">雷达</span></div>
-        <div class="tab-item" id="tab-network" onclick="switchTab('contacts')"><span class="tab-label">人脉网</span></div>
-        <div class="tab-item" onclick="switchTab('record')"><span class="tab-label">我的</span></div>
+        <div class="tab-item" id="tab-network" onclick="switchTab('network')"><span class="tab-label">人脉网</span></div>
+        <div class="tab-item" id="tab-profile" onclick="switchTab('profile')"><span class="tab-label">我的</span></div>
     </div>
 </div>
 
