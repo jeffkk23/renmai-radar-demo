@@ -408,14 +408,23 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'PingFang SC', 
                 </div>
             </div>
 
-            <!-- Match result card -->
-            <div style="margin-top:16px;background:linear-gradient(135deg,rgba(0,122,255,0.06),rgba(52,199,89,0.06));border-radius:12px;padding:16px;border:0.5px solid rgba(0,122,255,0.15);">
-                <div style="font-size:13px;font-weight:600;color:#007AFF;margin-bottom:8px;">与赵哥的资源匹配结果</div>
-                <div style="font-size:12px;color:#666;line-height:1.6;">
+            <!-- Privacy notice -->
+            <div style="margin-top:16px;background:#f5f5f7;border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:8px;">
+                <span style="font-size:16px;">🔒</span>
+                <span style="font-size:11px;color:#8e8e93;line-height:1.4;">隐私保护：Agent 交换的是脱敏后的行业/资源信息，不会泄露任何具体人名和公司名</span>
+            </div>
+
+            <!-- Match result card — desensitized output -->
+            <div style="margin-top:12px;background:linear-gradient(135deg,rgba(0,122,255,0.06),rgba(52,199,89,0.06));border-radius:12px;padding:16px;border:0.5px solid rgba(0,122,255,0.15);">
+                <div style="font-size:13px;font-weight:600;color:#007AFF;margin-bottom:8px;">你的秘书 × 赵哥的秘书 匹配结果</div>
+                <div style="font-size:12px;color:#666;line-height:1.8;">
                     发现3个高价值互补：<br>
-                    1. 你的王总（建材）↔ 赵哥的马总（地产开发）— 建材直供机会<br>
-                    2. 你的李姐（装修）↔ 赵哥的吴总（精装楼盘）— 装修承包对接<br>
-                    3. 赵哥的马总 ↔ 你的张总（投资）— 地产项目融资
+                    1. <strong>你的一位建材行业人脉</strong> ↔ 对方的一位地产开发人脉 — 建材直供机会<br>
+                    2. <strong>你的一位装修行业人脉</strong> ↔ 对方的一位精装楼盘人脉 — 装修承包对接<br>
+                    3. 对方的一位地产人脉 ↔ <strong>你的一位投资领域人脉</strong> — 项目融资
+                </div>
+                <div style="margin-top:10px;font-size:11px;color:#FF9500;background:rgba(255,149,0,0.06);border-radius:6px;padding:8px;">
+                    💡 赵哥最近在找建材供应商（与你的需求匹配！），建议优先对接第1项
                 </div>
             </div>
         </div>
@@ -433,6 +442,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'PingFang SC', 
                     <div style="font-size:13px;color:#8e8e93;margin-top:2px;">138****8888</div>
                     <div style="font-size:12px;color:#007AFF;margin-top:4px;">邀请码：X7K9M2</div>
                 </div>
+            </div>
+
+            <!-- Current needs status -->
+            <div style="background:linear-gradient(135deg,rgba(255,149,0,0.08),rgba(255,59,48,0.05));border:1px solid rgba(255,149,0,0.15);border-radius:12px;padding:14px 16px;margin-bottom:16px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                    <span style="font-size:12px;color:#8e8e93;">我的当前需求</span>
+                    <span style="font-size:11px;color:#007AFF;cursor:pointer;" onclick="alert('需求修改功能：可输入新的需求，Agent会自动匹配')">修改</span>
+                </div>
+                <div style="font-size:14px;color:#FF9500;font-weight:500;">最近想找靠谱的建材供应商合作</div>
+                <div style="font-size:10px;color:#aeaeb2;margin-top:4px;">好友的Agent对接时会自动识别此需求并优先匹配</div>
             </div>
 
             <!-- Stats grid -->
